@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(drone_sim LANGUAGES CXX)
 
 add_executable(my_program config.hpp main.cpp)
+find_package(Bullet REQUIRED)#chnge to bulletphy
 
 # Add the main source file to create the executable
 
@@ -14,9 +15,13 @@ target_include_directories(my_program PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/classes
     /usr/include
+    /usr/include/bullet
 )
 target_link_libraries(
   my_program
   PRIVATE
   raylib
+  BulletDynamics
+  BulletCollision
+  LinearMath
 )

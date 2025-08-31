@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/my_program.dir/main.cpp.o -o my_program  -lraylib 
+/usr/bin/c++ CMakeFiles/my_program.dir/main.cpp.o -o my_program  -lraylib -lBulletDynamics -lBulletCollision -lLinearMath 

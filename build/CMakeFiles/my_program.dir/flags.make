@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/aswin/Desktop/project -I/home/aswin/Desktop/project/classes
+CXX_INCLUDES = -I/home/aswin/Desktop/project -I/home/aswin/Desktop/project/classes -I/usr/include/bullet
 
 CXX_FLAGS = 
 
