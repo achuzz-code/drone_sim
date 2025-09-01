@@ -54,7 +54,6 @@ int main(void) {
     gy.render(GetMousePosition().x * 100.0f - 50000.0f);
     DrawText(std::to_string(GetMousePosition().y * 100.0f - 50000.0f).c_str(),
              200, 300, 30, RED);
-    DrawFPS(10, 10);
 
     EndDrawing();
   }
