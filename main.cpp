@@ -2,7 +2,6 @@
 #include "components/objectBody.hpp"
 #include "helperFn/cameraControl.hpp"
 #include "raylib.h"
-#include "raymath.h"
 #include "rlgl.h"
 #include <cmath>
 #include <ctime>
@@ -40,14 +39,6 @@ int main(void) {
     BeginDrawing();
     ClearBackground(RAYWHITE);
     BeginMode3D(camera);
-    rlPushMatrix();
-    rlMultMatrixf(MatrixToFloat(GetCustomRotationMatrix()));
-
-    // Draw the cuboid
-    DrawCubeV({0.0f, 0.0f, 0.0f}, {2.0f, 3.0f, 4.0f}, BLUE);
-    DrawCubeWires({0.0f, 0.0f, 0.0f}, 2.0f, 3.0f, 4.0f, RED);
-
-    rlPopMatrix();
     DrawGrid(200, 6);
     EndMode3D();
     gx.render(GetMousePosition().y * 100.0f - 50000.0f);
