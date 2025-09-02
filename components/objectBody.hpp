@@ -6,6 +6,7 @@
 #include "LinearMath/btQuaternion.h"
 #include "LinearMath/btTransform.h"
 #include "LinearMath/btVector3.h"
+#include <array>
 #include <btBulletDynamicsCommon.h>
 #include <raylib.h>
 #include <rlgl.h>
@@ -19,23 +20,36 @@ private:
   btVector3 size;
   btVector3 positon;
   float modelMat[16];
+  btRigidBody *body;
 
 public:
-  boxObject(float massOfBox, float pos[3], float sizeOfBox[3],
-            Color boxColor = RED) {
-    this->size = (btVector3){pos[0], pos[1], pos[2]};
+  boxObject(float massOfBox, std::array<float, 3> pos,
+            std::array<float, 3> sizeOfBox, Color boxColor = RED) {
+    this->size = btVector3(sizeOfBox.at(0), sizeOfBox.at(1), sizeOfBox.at(2));
     this->mass = massOfBox;
     objectColor = boxColor;
     btCollisionShape *boxCollShape = new btBoxShape(size / 2.0);
     collitionShapes.push_back(boxCollShape);
-    btDefaultMotionState *boxMotionState = new btDefaultMotionState(
-        btTransform(btQuaternion(0, 0, 0, 1)), btTransform());
+    btTransform startTransform;
+    startTransform.setIdentity();
+    startTransform.setOrigin(btVector3(pos.at(0), pos.at(1), pos.at(2)));
+
+    btDefaultMotionState *boxMotionState =
+        new btDefaultMotionState(startTransform);
     motionStates.push_back(boxMotionState);
-    btRigidBody::btRigidBodyConstructionInfo(this->mass, boxMotionState,
-                                             boxCollShape);
+    btVector3 inertia(0, 0, 0);
+    if (mass != 0.0f) {
+      boxCollShape->calculateLocalInertia(mass, inertia);
+    }
+    btRigidBody::btRigidBodyConstructionInfo boxCI(mass, boxMotionState,
+                                                   boxCollShape, inertia);
+    body = new btRigidBody(boxCI);
+    body->setRestitution(0.8f); // 0 = no bounce, 1 = perfectly elastic
   }
   void render() {
-
+    btTransform trans;
+    body->getMotionState()->getWorldTransform(trans);
+    trans.getOpenGLMatrix(modelMat);
     rlPushMatrix();
     rlMultMatrixf(modelMat);
     DrawCubeV({0.0f, 0.0f, 0.0f}, {size.x(), size.y(), size.z()}, objectColor);
@@ -43,6 +57,10 @@ public:
     rlPopMatrix();
   }
   ~boxObject() {}
+  btRigidBody *getBody() { return this->body; }
+  void kick() {
+    this->body->applyForce(btVector3{0, 100, 0}, btVector3{0, 0, 3});
+  }
 };
 
 class physicsDomain {
@@ -73,10 +91,12 @@ public:
       delete i;
     }
   }
+  void addObject(btRigidBody *body) { this->world->addRigidBody(body); }
+  void stepPhysics() { this->world->stepSimulation(1.0 / 60.0, 5); }
 };
 
 inline btRigidBody *GenerateGroundPlane() {
-  btCollisionShape *shape = new btStaticPlaneShape(btVector3(0, 1, 1), 1);
+  btCollisionShape *shape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
   collitionShapes.push_back(shape);
   btDefaultMotionState *groundMotionState = new btDefaultMotionState(
       btTransform(btQuaternion(0, 0, 0, 1)), btTransform::getIdentity());

@@ -5,7 +5,10 @@
 #include "rlgl.h"
 #include <cmath>
 #include <ctime>
+#include <iostream>
 #include <string>
+std::vector<btCollisionShape *> collitionShapes;
+std::vector<btDefaultMotionState *> motionStates;
 Matrix GetCustomRotationMatrix() {
   return (Matrix){-0.3333333f, 0.9333333f, -0.1333333f, 0.0f,
                   0.6666667f,  0.3333333f, 0.6666667f,  0.0f,
@@ -27,7 +30,13 @@ int main(void) {
   camera.up = {0.0f, 1.0f, 0.0f};         // Camera up vector (Y-axis)
   camera.fovy = 45.0f;                    // Camera field of view
   camera.projection = CAMERA_PERSPECTIVE; // Camera mode type
-
+  // defining the world and object
+  physicsDomain myWorld;
+  myWorld.addObject(GenerateGroundPlane());
+  boxObject droneBody(10, {5, 5, 5}, {5, 1, 5});
+  boxObject test(10, {5, 8, 2}, {5, 1, 5});
+  myWorld.addObject(droneBody.getBody());
+  myWorld.addObject(test.getBody());
   SetTargetFPS(60);
 
   // Main game loop
@@ -36,10 +45,19 @@ int main(void) {
     moveCamera(camera);
     // UpdateCamera(&camera, CAMERA_FIRST_PERSON);
     //  Draw
+
+    if (IsKeyDown(KEY_Z)) {
+      std::cout << "Z held down\n";
+      test.kick();
+    }
+
+    myWorld.stepPhysics();
     BeginDrawing();
     ClearBackground(RAYWHITE);
     BeginMode3D(camera);
     DrawGrid(200, 6);
+    droneBody.render();
+    test.render();
     EndMode3D();
     gx.render(GetMousePosition().y * 100.0f - 50000.0f);
     gy.render(GetMousePosition().x * 100.0f - 50000.0f);
