@@ -46,23 +46,23 @@ int main(void) {
     // UpdateCamera(&camera, CAMERA_FIRST_PERSON);
     //  Draw
 
-    if (IsKeyDown(KEY_Z)) {
-      std::cout << "Z held down\n";
-      test.kick();
-    }
-
     myWorld.stepPhysics();
     BeginDrawing();
     ClearBackground(RAYWHITE);
     BeginMode3D(camera);
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+      std::cout << "Z held down\n";
+      test.kick();
+    }
+
     DrawGrid(200, 6);
     droneBody.render();
     test.render();
     EndMode3D();
     gx.render(GetMousePosition().y * 100.0f - 50000.0f);
     gy.render(GetMousePosition().x * 100.0f - 50000.0f);
-    DrawText(std::to_string(GetMousePosition().y * 100.0f - 50000.0f).c_str(),
-             200, 300, 30, RED);
+    DrawText(std::to_string(GetMousePosition().y - 500).c_str(), 200, 300, 30,
+             RED);
 
     EndDrawing();
   }

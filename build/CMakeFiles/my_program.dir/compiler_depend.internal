@@ -3,6 +3,7 @@
 
 CMakeFiles/my_program.dir/main.cpp.o
  /home/aswin/Desktop/project/main.cpp
+ /home/aswin/Desktop/project/helperFn/drawArrow.hpp
  /home/aswin/Desktop/project/components/graph.hpp
  /home/aswin/Desktop/project/components/objectBody.hpp
  /home/aswin/Desktop/project/helperFn/cameraControl.hpp
@@ -241,6 +242,7 @@ CMakeFiles/my_program.dir/main.cpp.o
  /usr/include/memory.h
  /usr/include/pthread.h
  /usr/include/raylib.h
+ /usr/include/raymath.h
  /usr/include/rlgl.h
  /usr/include/sched.h
  /usr/include/stdc-predef.h

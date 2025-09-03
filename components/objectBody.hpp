@@ -1,3 +1,4 @@
+#include "../helperFn/drawArrow.hpp"
 #include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 #include "BulletCollision/CollisionShapes/btStaticPlaneShape.h"
@@ -21,6 +22,8 @@ private:
   btVector3 positon;
   float modelMat[16];
   btRigidBody *body;
+  btTransform trans;
+  btVector3 up;
 
 public:
   boxObject(float massOfBox, std::array<float, 3> pos,
@@ -45,10 +48,13 @@ public:
                                                    boxCollShape, inertia);
     body = new btRigidBody(boxCI);
     body->setRestitution(0.8f); // 0 = no bounce, 1 = perfectly elastic
+    body->getMotionState()->getWorldTransform(trans);
+    this->up = trans.getBasis().getColumn(1);
   }
   void render() {
-    btTransform trans;
     body->getMotionState()->getWorldTransform(trans);
+    this->up = trans.getBasis().getColumn(1);
+
     trans.getOpenGLMatrix(modelMat);
     rlPushMatrix();
     rlMultMatrixf(modelMat);
@@ -59,7 +65,11 @@ public:
   ~boxObject() {}
   btRigidBody *getBody() { return this->body; }
   void kick() {
-    this->body->applyForce(btVector3{0, 100, 0}, btVector3{0, 0, 3});
+    auto force = (GetMousePosition().y - 500) * this->up;
+    auto pos = trans.getOrigin();
+    this->body->applyForce(force, btVector3{0, 0, 0});
+    force /= 10;
+    DrawArrow3D({force.x(), force.y(), force.z()}, {pos.x(), pos.y(), pos.z()});
   }
 };
 
